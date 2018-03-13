@@ -1,6 +1,6 @@
 ﻿  main.cpp
-c:\users\thomas\desktop\study\operating systems\assignment\repo\operatingsystemassignment1\operatingsystemassignment1\main.cpp(95): warning C4018: '<': signed/unsigned mismatch
-c:\users\thomas\desktop\study\operating systems\assignment\repo\operatingsystemassignment1\operatingsystemassignment1\main.cpp(101): warning C4018: '<': signed/unsigned mismatch
-c:\users\thomas\desktop\study\operating systems\assignment\repo\operatingsystemassignment1\operatingsystemassignment1\main.cpp(103): warning C4018: '<': signed/unsigned mismatch
-c:\users\thomas\desktop\study\operating systems\assignment\repo\operatingsystemassignment1\operatingsystemassignment1\main.cpp(125): warning C4018: '<': signed/unsigned mismatch
+c:\users\thomas\desktop\study\operating systems\assignment\repo\operatingsystemassignment1\operatingsystemassignment1\main.cpp(100): warning C4018: '<': signed/unsigned mismatch
+c:\users\thomas\desktop\study\operating systems\assignment\repo\operatingsystemassignment1\operatingsystemassignment1\main.cpp(106): warning C4018: '<': signed/unsigned mismatch
+c:\users\thomas\desktop\study\operating systems\assignment\repo\operatingsystemassignment1\operatingsystemassignment1\main.cpp(108): warning C4018: '<': signed/unsigned mismatch
+c:\users\thomas\desktop\study\operating systems\assignment\repo\operatingsystemassignment1\operatingsystemassignment1\main.cpp(130): warning C4018: '<': signed/unsigned mismatch
   operatingSystemAssignment1.vcxproj -> C:\Users\Thomas\Desktop\study\Operating Systems\assignment\Repo\operatingSystemAssignment1\Debug\operatingSystemAssignment1.exe

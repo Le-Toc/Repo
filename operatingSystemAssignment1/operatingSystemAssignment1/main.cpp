@@ -31,7 +31,6 @@ int main()
 	//print(fifoJobs, "fifoJobs");
 
 	int startingTime = getStartingTime(fifoJobs);
-	std::cout << startingTime << std::endl;
 
 	int job = 0;
 	//Output current job
@@ -62,6 +61,12 @@ void outputCurrentJob(std::vector<Job>& fifoJobs, int& time, bool& allJobsAreDon
 {
 	if (time >= startingTime)
 	{
+		for (Job j : fifoJobs)
+		{
+			if (j.getArrivalTime() == currentTime)
+				std::cout << "ARRIVED: " << j.getName() << std::endl;
+		}
+
 		int duration = fifoJobs[job].getDuration();
 
 		duration -= time;
