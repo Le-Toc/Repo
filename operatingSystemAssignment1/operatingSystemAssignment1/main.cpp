@@ -2,9 +2,11 @@
 #include <vector>
 #include "Job.hpp"
 
-void outputCurrentJob(std::vector<Job>& fifoJobs, int& time, bool& allJobsAreDone, int& job, int& currentTime);
+void outputCurrentJob(std::vector<Job>& fifoJobs, int& time, bool& allJobsAreDone, int& job, int& currentTime,
+	int startingTime);
 std::vector<Job> getFIFOSchedule(std::vector<Job> jobVector);
 void print(std::vector<Job> vectorStudent, std::string header);
+int getStartingTime(std::vector<Job> fifoJobs);
 
 int main()
 {
@@ -28,40 +30,60 @@ int main()
 
 	//print(fifoJobs, "fifoJobs");
 
+	int startingTime = getStartingTime(fifoJobs);
+	std::cout << startingTime << std::endl;
+
 	int job = 0;
 	//Output current job
 	while (!allJobsAreDone)
 	{
-		outputCurrentJob(fifoJobs, time, allJobsAreDone, job, currentTime);
+		outputCurrentJob(fifoJobs, time, allJobsAreDone, job, currentTime, startingTime);
 	}
 
 	system("pause");
 	return 0;
 }
 
-void outputCurrentJob(std::vector<Job>& fifoJobs, int& time, bool& allJobsAreDone, int& job, int& currentTime)
+int getStartingTime(std::vector<Job> fifoJobs)
 {
-	int duration = fifoJobs[job].getDuration();
+	int startingTime = 100000;//I'm assumming that no arrival time will exceed this.
 
-	duration -= time;
-
-	if (duration == 0)
+	for (Job j : fifoJobs)
 	{
-		std::cout << "COMPLETE: " << fifoJobs[job].getName() << std::endl;
-		job++;
-		time = 0;
+		if (j.getArrivalTime() < startingTime)
+			startingTime = j.getArrivalTime();
+	}
 
-		if (job == fifoJobs.size())
+	return startingTime;
+}
+
+void outputCurrentJob(std::vector<Job>& fifoJobs, int& time, bool& allJobsAreDone, int& job, int& currentTime,
+	int startingTime)
+{
+	if (time >= startingTime)
+	{
+		int duration = fifoJobs[job].getDuration();
+
+		duration -= time;
+
+		if (duration == 0)
 		{
-			allJobsAreDone = true;
+			std::cout << "COMPLETE: " << fifoJobs[job].getName() << std::endl;
+			job++;
+			time = 0;
+
+			if (job == fifoJobs.size())
+			{
+				allJobsAreDone = true;
+			}
+		}
+
+		else
+		{
+			std::cout << currentTime << " " << fifoJobs[job].getName() << std::endl;
 		}
 	}
-
-	else
-	{
-		std::cout << currentTime << " " << fifoJobs[job].getName() << std::endl;
-	}
-
+	
 	time++, currentTime++;
 }
 
