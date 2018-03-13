@@ -74,6 +74,7 @@ void outputCurrentJob(std::vector<Job>& fifoJobs, int& time, bool& allJobsAreDon
 		if (duration == 0)
 		{
 			std::cout << "COMPLETE: " << fifoJobs[job].getName() << std::endl;
+			std::cout << currentTime << " " << fifoJobs[job].getName() << std::endl;
 			job++;
 			time = 0;
 
@@ -88,7 +89,7 @@ void outputCurrentJob(std::vector<Job>& fifoJobs, int& time, bool& allJobsAreDon
 			std::cout << currentTime << " " << fifoJobs[job].getName() << std::endl;
 		}
 	}
-	
+
 	time++, currentTime++;
 }
 
