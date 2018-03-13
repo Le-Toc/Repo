@@ -2,13 +2,13 @@
 #include <vector>
 #include "Job.hpp"
 
-void outputCurrentJob(std::vector<Job>& fifoJobs, int& time, bool& allJobsAreDone, int& job);
+void outputCurrentJob(std::vector<Job>& fifoJobs, int& time, bool& allJobsAreDone, int& job, int& currentTime);
 std::vector<Job> getFIFOSchedule(std::vector<Job> jobVector);
 void print(std::vector<Job> vectorStudent, std::string header);
 
 int main()
 {
-	int time = 0;
+	int time = 0, currentTime = 0;
 	bool allJobsAreDone = false;
 
 	Job s1("A", 10, 18);
@@ -32,14 +32,14 @@ int main()
 	//Output current job
 	while (!allJobsAreDone)
 	{
-		outputCurrentJob(fifoJobs, time, allJobsAreDone, job);
+		outputCurrentJob(fifoJobs, time, allJobsAreDone, job, currentTime);
 	}
 
 	system("pause");
 	return 0;
 }
 
-void outputCurrentJob(std::vector<Job>& fifoJobs, int& time, bool& allJobsAreDone, int& job)
+void outputCurrentJob(std::vector<Job>& fifoJobs, int& time, bool& allJobsAreDone, int& job, int& currentTime)
 {
 	int duration = fifoJobs[job].getDuration();
 
@@ -59,10 +59,10 @@ void outputCurrentJob(std::vector<Job>& fifoJobs, int& time, bool& allJobsAreDon
 
 	else
 	{
-		std::cout << time << " " << fifoJobs[job].getName() << std::endl;
+		std::cout << currentTime << " " << fifoJobs[job].getName() << std::endl;
 	}
 
-	time++;
+	time++, currentTime++;
 }
 
 std::vector<Job> getFIFOSchedule(std::vector<Job> jobVector)
