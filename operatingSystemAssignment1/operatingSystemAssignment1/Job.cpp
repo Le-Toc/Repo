@@ -4,6 +4,11 @@
 using namespace std;
 
 //Constructor
+Job::Job(): name("default"), arrivalTime(0), duration(0)
+{
+}
+
+//Constructor
 Job::Job(string name, int arrivalTime, int duration) : name(name), arrivalTime(arrivalTime), duration(duration)
 {
 }

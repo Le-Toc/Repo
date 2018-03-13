@@ -5,6 +5,7 @@ class Job
 {
 public:
 	Job(std::string name, int arrivalTime, int duration);
+	Job();
 	~Job();
 
 	//Properities
