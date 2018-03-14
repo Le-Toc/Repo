@@ -4,16 +4,11 @@
 
 void runProgram();
 void readJobsInFromTheFile(std::vector<Job>& jobVector);
-void outputCurrentJob(std::vector<Job>& fifoJobs, int& time, bool& allJobsAreDone, int& job, int currentTime,
-	int startingTime);
 std::vector<Job> getFIFOSchedule(std::vector<Job> jobVector);
 void print(std::vector<Job> vectorStudent, std::string header);
 void print(std::vector<Job> vectorStudent);
 int getStartingTime(std::vector<Job> fifoJobs);
-void outputShortestJobFirst(std::vector<Job> originalJobVector, int currentTime, std::vector<Job>& sjfJobs,
-	int& sjfJob, bool sjfAJobIsRunning);
 void sortSTJFJobsList(std::vector<Job>& sjfJobs);
-void outputCurrentJobs(Job job, std::string jobType);
 void addToEntry(std::string jobName, std::vector<std::string>& outputArray, int pos);
 void loadInSchedulers(std::vector<Job>& jobVector, std::vector<Job>& fifoJobs, int& fifoStartingTime,
 	std::vector<Job>& sjfJobs);
@@ -98,15 +93,6 @@ void runProgram()
 	}
 
 	std::cout << "= SIMULATION COMPLETE" << std::endl;
-	
-	/*int job = 0;
-	//Output current job
-	while (!allJobsAreDone)
-	{
-		outputShortestJobFirst(jobVector, currentTime, sjfJobs, sjfJob, sjfAJobIsRunning);
-		outputCurrentJob(fifoJobs, time, allJobsAreDone, job, currentTime, startingTime);
-		currentTime++;
-	}*/
 }
 
 /*
