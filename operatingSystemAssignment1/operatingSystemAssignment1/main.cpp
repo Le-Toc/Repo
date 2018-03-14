@@ -269,7 +269,10 @@ void updateAllOfTheSchedules(std::vector<Job>& fifoJobs, int& fifoJobTime, bool&
 
 	if (!allSJFJobsAreDone)
 	{
-		updateSJF(sjfJobs, currentSJFJob, sjfJobTime, outputArray, allSJFJobsAreDone, currentTime);
+		if (currentTime > 0)
+		{
+			updateSJF(sjfJobs, currentSJFJob, sjfJobTime, outputArray, allSJFJobsAreDone, currentTime);
+		}
 	}
 
 	if (allFIFOJobsAreDone)
