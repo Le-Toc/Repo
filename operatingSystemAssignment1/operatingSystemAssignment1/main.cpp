@@ -15,12 +15,15 @@ void outputShortestJobFirst(std::vector<Job> originalJobVector, int currentTime,
 void sortSTJFJobsList(std::vector<Job>& sjfJobs);
 void outputCurrentJobs(Job job, std::string jobType);
 void addToEntry(std::string jobName, std::vector<std::string>& outputArray, int pos);
-void loadInSchedulers(std::vector<Job>& jobVector, std::vector<Job>& fifoJobs, int& fifoStartingTime);
+void loadInSchedulers(std::vector<Job>& jobVector, std::vector<Job>& fifoJobs, int& fifoStartingTime,
+	std::vector<Job>& sjfJobs);
 void outputMessage(std::string message, std::string jobName);
 void updateAllOfTheSchedules(std::vector<Job>& fifoJobs, int& fifoJobTime, bool& allJobsAreDone,
 	int& currentFIFOJob, int& currentTime, int& fifoStartingTime, bool& allFIFOJobsAreDone,
-	bool& allSJFJobsAreDone, std::vector<Job>& jobVector, int& currentSJFJob, bool& sjfAJobIsRunning,
-	std::vector<Job>& sjfList, int& sjfJobTime, unsigned int& sjfAmountOfJobsDone, std::vector<std::string>& outputArray);
+	bool& allSTCFJobsAreDone, std::vector<Job>& jobVector, int& currentSTCFJob, bool& stcfAJobIsRunning,
+	std::vector<Job>& stcfList, int& stcfJobTime, unsigned int& stcfAmountOfJobsDone,
+	std::vector<std::string>& outputArray, bool& allSJFJobsAreDone, std::vector<Job>& sjfJobs,
+	int& currentSJFJob, int& sjfJobTime);
 void updateFIFO(std::vector<Job>& fifoJobs, int& fifoJobTime, int& currentFIFOJob, int& currentTime,
 	bool& allFIFOJobsAreDone, bool& allJobsAreDone, std::vector<std::string>& outputArray);
 void updateSTCF(std::vector<Job> sjfjobVector, int& sjfJobTime, int& currentTime, std::vector<Job>& sjfList,
@@ -33,6 +36,9 @@ void runJob(std::vector<Job>& sjfList, int& sjfJobTime, int& currentTime, bool& 
 void output(int message);
 void output(std::string message);
 void outputArrayMethod(std::vector<std::string>& outputArray, int& currentTime);
+void updateSJF(std::vector<Job>& sjfJobs, int& currentSJFJob, int& sjfJobTime,
+	std::vector<std::string>& outputArray, bool& allSJFJobsAreDone, int& currentTime);
+void getSJFSchedule(std::vector <Job> jobVector, std::vector<Job>& sjfJobs);
 
 int main()
 {
@@ -51,8 +57,8 @@ void runProgram()
 	int fifoJobTime = 0, currentTime = 0;
 	bool allJobsAreDone = false;
 	bool allFIFOJobsAreDone = false;
+	bool allSJFJobsAreDone = false;
 	bool allSTCFJobsAreDone = false;
-	//bool allJobsAreDone = false;
 	//bool allJobsAreDone = false;
 	std::vector<Job> fifoJobs;
 	int fifoStartingTime;
@@ -64,26 +70,30 @@ void runProgram()
 	int stcfJobTime = 0;
 	unsigned int stcfAmountOfJobsDone = 0;
 
+	std::vector<Job> sjfJobs;
+	int currentSJFJob = 0;
+	int sjfJobTime = 0;
+
 	std::cout << "Time			FIFO		SJF		SJCF		RR		RR" << std::endl;
 
 	//Read in from the file
 	readJobsInFromTheFile(jobVector);
 
 	//Load in schedules if neccissary, mostly FIFO at this point
-	loadInSchedulers(jobVector, fifoJobs, fifoStartingTime);
+	loadInSchedulers(jobVector, fifoJobs, fifoStartingTime, sjfJobs);
 
 	while (!allJobsAreDone)
 	{
 		//Update 
 		updateAllOfTheSchedules(fifoJobs, fifoJobTime, allJobsAreDone, currentFIFOJob, currentTime,
-			fifoStartingTime, allFIFOJobsAreDone, allSTCFJobsAreDone, jobVector, currentSJCFJob, stcfJobIsRunning,
-			stcfList, stcfJobTime, stcfAmountOfJobsDone, outputArray);
-
-		//updateSJCF();
+			fifoStartingTime, allFIFOJobsAreDone, allSTCFJobsAreDone, jobVector, currentSJCFJob,
+			stcfJobIsRunning, stcfList, stcfJobTime, stcfAmountOfJobsDone, outputArray, allSJFJobsAreDone,
+			sjfJobs, currentSJFJob, sjfJobTime);
 
 		outputArrayMethod(outputArray, currentTime);
 		fifoJobTime++;
 		stcfJobTime++;
+		sjfJobTime++;
 		currentTime++;
 	}
 
@@ -167,11 +177,40 @@ void readJobsInFromTheFile(std::vector<Job>& jobVector)
 	jobVector.push_back(j8);
 }
 
-void loadInSchedulers(std::vector<Job>& jobVector, std::vector<Job>& fifoJobs, int& fifoStartingTime)
+void loadInSchedulers(std::vector<Job>& jobVector, std::vector<Job>& fifoJobs, int& fifoStartingTime,
+	std::vector<Job>& sjfJobs)
 {
 	fifoJobs = getFIFOSchedule(jobVector);
 	fifoStartingTime = fifoJobs[0].getArrivalTime();
-	//sjcfJobs = getSJCFSchedule(jobVector);
+	getSJFSchedule(jobVector, sjfJobs);
+}
+
+void getSJFSchedule(std::vector <Job> jobVector, std::vector<Job>& sjfJobs)
+{
+	for (unsigned int i = 0; i < jobVector.size(); i++)
+	{
+		sjfJobs.push_back(jobVector[i]);
+	}
+
+	//Sort new job list;
+	for (unsigned int i = 0; i < sjfJobs.size(); i++)
+	{
+		for (unsigned int testJobPosition = i + 1; testJobPosition < sjfJobs.size(); testJobPosition++)
+		{
+			if (sjfJobs[i].getDuration() > sjfJobs[testJobPosition].getDuration())
+			{
+				//Switch the two jobs
+				//Make a copy of the first one
+				Job temp = sjfJobs[i];
+
+				//Move the second one into the first one
+				sjfJobs[i] = sjfJobs[testJobPosition];
+
+				//Replace the second one with the first one from the temp job
+				sjfJobs[testJobPosition] = temp;
+			}
+		}
+	}
 }
 
 std::vector<Job> getFIFOSchedule(std::vector<Job> jobVector)
@@ -224,7 +263,8 @@ void updateAllOfTheSchedules(std::vector<Job>& fifoJobs, int& fifoJobTime, bool&
 	int& currentFIFOJob, int& currentTime, int& fifoStartingTime, bool& allFIFOJobsAreDone,
 	bool& allSTCFJobsAreDone, std::vector<Job>& jobVector, int& currentSTCFJob, bool& stcfAJobIsRunning,
 	std::vector<Job>& stcfList, int& stcfJobTime, unsigned int& stcfAmountOfJobsDone,
-	std::vector<std::string>& outputArray)
+	std::vector<std::string>& outputArray, bool& allSJFJobsAreDone, std::vector<Job>& sjfJobs,
+	int& currentSJFJob, int& sjfJobTime)
 {
 	if (!allFIFOJobsAreDone)
 	{
@@ -241,12 +281,55 @@ void updateAllOfTheSchedules(std::vector<Job>& fifoJobs, int& fifoJobTime, bool&
 			allSTCFJobsAreDone, stcfAmountOfJobsDone, outputArray);
 	}
 
+	if (!allSJFJobsAreDone)
+	{
+		updateSJF(sjfJobs, currentSJFJob, sjfJobTime, outputArray, allSJFJobsAreDone, currentTime);
+	}
+
 	if (allFIFOJobsAreDone)
 	{
 		if (allSTCFJobsAreDone)
 		{
-			allJobsAreDone = true;
+			if (allSJFJobsAreDone)
+			{
+				allJobsAreDone = true;
+			}
 		}
+	}
+}
+
+void updateSJF(std::vector<Job>& sjfJobs, int& currentSJFJob, int& sjfJobTime,
+	std::vector<std::string>& outputArray, bool& allSJFJobsAreDone, int& currentTime)
+{
+	//Get the duration of the current job
+	int duration = sjfJobs[currentSJFJob].getDuration();
+
+	//Get the current value of the duration
+	duration -= sjfJobTime;
+
+	//If the job is finished...
+	if (duration == 0)
+	{
+		outputMessage("COMPLETE: ", sjfJobs[currentSJFJob].getName());
+		addToEntry(sjfJobs[currentSJFJob].getName(), outputArray, 1);
+
+		//Move onto the next job
+		currentSJFJob++;
+
+		//Reset the FIFO job time seeing as a new job has started
+		sjfJobTime = 0;
+
+		//Check if there are any more jobs in the FIFO shedule
+		if (currentSJFJob == sjfJobs.size())
+		{
+			allSJFJobsAreDone = true;
+		}
+	}
+
+	else
+	{
+		//Output the current time and the SJF job being run
+		addToEntry(sjfJobs[currentSJFJob].getName(), outputArray, 1);
 	}
 }
 
