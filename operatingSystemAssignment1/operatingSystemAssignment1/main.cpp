@@ -45,7 +45,7 @@ int main()
 void runProgram()
 {
 	//Declare all variables
-	std::vector<std::string> outputArray = {"-", "-"};
+	std::vector<std::string> outputArray = {"-", "-", "-", "-", "-" };
 	std::vector<Job> jobVector;
 	std::vector<Job> sjfJobs;
 	int fifoJobTime = 0, currentTime = 0;
@@ -64,7 +64,7 @@ void runProgram()
 	int sjfJobTime = 0;
 	unsigned int sjfAmountOfJobsDone = 0;
 
-	std::cout << "Time" << "			" << "FIFO" << "			" << "SJF" << std::endl;
+	std::cout << "Time			FIFO		SJF		SJTC		RR		RR" << std::endl;
 
 	//Read in from the file
 	readJobsInFromTheFile(jobVector);
@@ -384,8 +384,9 @@ void addToEntry(std::string jobName, std::vector<std::string>& outputArray, int 
 
 void outputArrayMethod(std::vector<std::string>& outputArray, int& currentTime)
 {
-	std::cout << currentTime << "			" << outputArray[0] << "			" << outputArray[1] <<
-		std::endl;
+	std::cout << currentTime << "			" << outputArray[0] << "		" << outputArray[1] <<
+		"		" << outputArray[2] << "		" << outputArray[3] << "		" <<
+		outputArray[4] << std::endl;
 }
 
 void print(std::vector<Job> vectorJob, std::string header)
