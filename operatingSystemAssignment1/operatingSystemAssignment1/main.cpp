@@ -382,6 +382,7 @@ void updateSJF(std::vector<Job>& sjfJobs, int& currentSJFJob, int& sjfJobTime,
 		if (currentSJFJob == sjfJobs.size())
 		{
 			allSJFJobsAreDone = true;
+			addToEntry("-", outputArray, 1);
 		}
 	}
 
@@ -455,6 +456,7 @@ void updateSTCF(std::vector<Job> stcfJobVector, int& stcfJobTime, int& currentTi
 			if (stcfAmountOfJobsDone >= stcfJobVector.size())
 			{
 				allSTCFJobsAreDone = true;
+				addToEntry("-", outputArray, 2);
 			}
 
 			//If there are jobs left
