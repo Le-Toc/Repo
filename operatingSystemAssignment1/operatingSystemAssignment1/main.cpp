@@ -11,14 +11,15 @@ int getStartingTime(std::vector<Job> fifoJobs);
 void sortSTJFJobsList(std::vector<Job>& sjfJobs);
 void addToEntry(std::string jobName, std::vector<std::string>& outputArray, int pos);
 void loadInSchedulers(std::vector<Job>& jobVector, std::vector<Job>& fifoJobs, int& fifoStartingTime,
-	std::vector<Job>& sjfJobs);
+	std::vector<Job>& sjfJobs, std::vector<Job>& rrList);
 void outputMessage(std::string message, std::string jobName);
 void updateAllOfTheSchedules(std::vector<Job>& fifoJobs, int& fifoJobTime, bool& allJobsAreDone,
 	int& currentFIFOJob, int& currentTime, int& fifoStartingTime, bool& allFIFOJobsAreDone,
 	bool& allSTCFJobsAreDone, std::vector<Job>& jobVector, int& currentSTCFJob, bool& stcfAJobIsRunning,
 	std::vector<Job>& stcfList, int& stcfJobTime, unsigned int& stcfAmountOfJobsDone,
 	std::vector<std::string>& outputArray, bool& allSJFJobsAreDone, std::vector<Job>& sjfJobs,
-	int& currentSJFJob, int& sjfJobTime);
+	int& currentSJFJob, int& sjfJobTime, int& currentRRJob, int& rrJobTime, bool& allRRJobsAreDone,
+	int& rrNumberOfJobsCompleted, int& timeSliceCount, std::vector<Job>& rrList);
 void updateFIFO(std::vector<Job>& fifoJobs, int& fifoJobTime, int& currentFIFOJob, int& currentTime,
 	bool& allFIFOJobsAreDone, bool& allJobsAreDone, std::vector<std::string>& outputArray);
 void updateSTCF(std::vector<Job> sjfjobVector, int& sjfJobTime, int& currentTime, std::vector<Job>& sjfList,
@@ -34,6 +35,9 @@ void outputArrayMethod(std::vector<std::string>& outputArray, int& currentTime);
 void updateSJF(std::vector<Job>& sjfJobs, int& currentSJFJob, int& sjfJobTime,
 	std::vector<std::string>& outputArray, bool& allSJFJobsAreDone, int& currentTime);
 void getSJFSchedule(std::vector <Job> jobVector, std::vector<Job>& sjfJobs);
+void updateRR(std::vector<Job>& rrList, int timeSlice, int& currentRRJob, int& rrJobTime,
+	std::vector<std::string>& outputArray, bool& allRRJobsAreDone, std::vector<Job> jobVector,
+	int& rrNumberOfJobsCompleted, int& timeSliceCount);
 
 int main()
 {
@@ -54,7 +58,7 @@ void runProgram()
 	bool allFIFOJobsAreDone = false;
 	bool allSJFJobsAreDone = false;
 	bool allSTCFJobsAreDone = false;
-	//bool allJobsAreDone = false;
+	bool allRRJobsAreDone = false;
 	std::vector<Job> fifoJobs;
 	int fifoStartingTime;
 	int currentFIFOJob = 0;
@@ -68,6 +72,11 @@ void runProgram()
 	std::vector<Job> sjfJobs;
 	int currentSJFJob = 0;
 	int sjfJobTime = 0;
+	int currentRRJob = 0;
+	int rrJobTime = 0;
+	int rrNumberOfJobsCompleted = 0;
+	int timeSliceCount = 0;
+	std::vector<Job> rrList;
 
 	std::cout << "Time			FIFO		SJF		SJCF		RR		RR" << std::endl;
 
@@ -75,7 +84,7 @@ void runProgram()
 	readJobsInFromTheFile(jobVector);
 
 	//Load in schedules if neccissary, mostly FIFO at this point
-	loadInSchedulers(jobVector, fifoJobs, fifoStartingTime, sjfJobs);
+	loadInSchedulers(jobVector, fifoJobs, fifoStartingTime, sjfJobs, rrList);
 
 	while (!allJobsAreDone)
 	{
@@ -83,12 +92,14 @@ void runProgram()
 		updateAllOfTheSchedules(fifoJobs, fifoJobTime, allJobsAreDone, currentFIFOJob, currentTime,
 			fifoStartingTime, allFIFOJobsAreDone, allSTCFJobsAreDone, jobVector, currentSJCFJob,
 			stcfJobIsRunning, stcfList, stcfJobTime, stcfAmountOfJobsDone, outputArray, allSJFJobsAreDone,
-			sjfJobs, currentSJFJob, sjfJobTime);
+			sjfJobs, currentSJFJob, sjfJobTime, currentRRJob, rrJobTime, allRRJobsAreDone,
+			rrNumberOfJobsCompleted, timeSliceCount, rrList);
 
 		outputArrayMethod(outputArray, currentTime);
 		fifoJobTime++;
 		stcfJobTime++;
 		sjfJobTime++;
+		rrJobTime++;
 		currentTime++;
 	}
 
@@ -164,11 +175,12 @@ void readJobsInFromTheFile(std::vector<Job>& jobVector)
 }
 
 void loadInSchedulers(std::vector<Job>& jobVector, std::vector<Job>& fifoJobs, int& fifoStartingTime,
-	std::vector<Job>& sjfJobs)
+	std::vector<Job>& sjfJobs, std::vector<Job>& rrList)
 {
 	fifoJobs = getFIFOSchedule(jobVector);
 	fifoStartingTime = fifoJobs[0].getArrivalTime();
 	getSJFSchedule(jobVector, sjfJobs);
+	rrList = getFIFOSchedule(jobVector);
 }
 
 void getSJFSchedule(std::vector <Job> jobVector, std::vector<Job>& sjfJobs)
@@ -250,7 +262,8 @@ void updateAllOfTheSchedules(std::vector<Job>& fifoJobs, int& fifoJobTime, bool&
 	bool& allSTCFJobsAreDone, std::vector<Job>& jobVector, int& currentSTCFJob, bool& stcfAJobIsRunning,
 	std::vector<Job>& stcfList, int& stcfJobTime, unsigned int& stcfAmountOfJobsDone,
 	std::vector<std::string>& outputArray, bool& allSJFJobsAreDone, std::vector<Job>& sjfJobs,
-	int& currentSJFJob, int& sjfJobTime)
+	int& currentSJFJob, int& sjfJobTime, int& currentRRJob, int& rrJobTime, bool& allRRJobsAreDone,
+	int& rrNumberOfJobsCompleted, int& timeSliceCount, std::vector<Job>& rrList)
 {
 	if (!allFIFOJobsAreDone)
 	{
@@ -275,15 +288,72 @@ void updateAllOfTheSchedules(std::vector<Job>& fifoJobs, int& fifoJobTime, bool&
 		}
 	}
 
+	if (!allRRJobsAreDone)
+	{
+		if (currentTime > 0)
+		{
+			int timeSlice = 5;
+			updateRR(rrList, timeSlice, currentRRJob, rrJobTime, outputArray, allRRJobsAreDone, jobVector,
+				rrNumberOfJobsCompleted, timeSliceCount);
+		}
+	}
+
 	if (allFIFOJobsAreDone)
 	{
 		if (allSTCFJobsAreDone)
 		{
 			if (allSJFJobsAreDone)
 			{
-				allJobsAreDone = true;
+				if (allRRJobsAreDone)
+				{
+					allJobsAreDone = true;
+				}
 			}
 		}
+	}
+}
+
+void updateRR(std::vector<Job>& rrList, int timeSlice, int& currentRRJob, int& rrJobTime,
+	std::vector<std::string>& outputArray, bool& allRRJobsAreDone, std::vector<Job> jobVector,
+	int& rrNumberOfJobsCompleted, int& timeSliceCount)
+{
+	timeSliceCount++;
+
+	if (timeSliceCount == timeSlice)
+	{
+		timeSliceCount = 0;
+		currentRRJob++;
+		if (currentRRJob == rrList.size())
+		{
+			currentRRJob = 0;
+		}
+	}
+
+	//Get the duration of the current job
+	int duration = rrList[currentRRJob].getDuration();
+	duration -= 1;
+
+	//If the job is finished...
+	if (duration == 0)
+	{
+		outputMessage("COMPLETE: ", rrList[currentRRJob].getName());
+		addToEntry(rrList[currentRRJob].getName(), outputArray, 3);
+
+		rrList.erase(rrList.begin() + currentRRJob);
+
+		rrNumberOfJobsCompleted++;
+
+		//Check if there are any more jobs in the FIFO shedule
+		if (rrNumberOfJobsCompleted == jobVector.size())
+		{
+			allRRJobsAreDone = true;
+		}
+	}
+
+	else
+	{
+		//Output the current time and the SJF job being run
+		addToEntry(rrList[currentRRJob].getName(), outputArray, 3);
 	}
 }
 
