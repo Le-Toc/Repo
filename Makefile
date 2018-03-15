@@ -1,2 +1,5 @@
-simulate: main.cpp Job.cpp
-	g++ -o simulate  main.cpp Job.cpp -I.
+CC=g++
+CFLAGS=-I.
+
+simulate: main.o Job.o
+	$(CC) -o simulate  main.o Job.o -I.
