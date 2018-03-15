@@ -51,6 +51,9 @@ int main()
 
 void runProgram()
 {
+  int hello = 5;
+  int goodbye = 5;
+  int howAreYou = 10;
 	//Declare all variables
 	std::vector<std::string> outputArray = {"-", "-", "-", "-", "-" };
 	std::vector<Job> jobVector;

@@ -1,0 +1,2 @@
+ operatingSystemsAssignment1: main.cpp Job.cpp
+	g++ -o operatingSystemsAssignment1 main.cpp Job.cpp -I.
