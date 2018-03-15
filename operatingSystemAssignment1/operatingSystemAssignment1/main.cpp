@@ -403,17 +403,17 @@ void updateFIFO(std::vector<Job>& fifoJobs, int& fifoJobTime, int& currentFIFOJo
 			outputMessage("ARRIVED: ", j.getName());
 		}
 	}
-	
+
 	//Get the duration of the current job
 	int duration = fifoJobs[currentFIFOJob].getDuration();
-	
+
 	//Get the current value of the duration
 	duration -= fifoJobTime;
-	
+
 	//If the job is finished...
 	if (duration == 0)
 	{
-		outputMessage("COMPLETE: ", fifoJobs[currentFIFOJob].getName());
+		outputMessage("FIFO COMPLETE: ", fifoJobs[currentFIFOJob].getName());
 		addToEntry(fifoJobs[currentFIFOJob].getName(), outputArray, 0);
 
 		//Move onto the next job
@@ -421,14 +421,15 @@ void updateFIFO(std::vector<Job>& fifoJobs, int& fifoJobTime, int& currentFIFOJo
 
 		//Reset the FIFO job time seeing as a new job has started
 		fifoJobTime = 0;
-		
+
 		//Check if there are any more jobs in the FIFO shedule
 		if (currentFIFOJob == fifoJobs.size())
 		{
 			allFIFOJobsAreDone = true;
+			addToEntry("-", outputArray, 0);
 		}
 	}
-	
+
 	else
 	{
 		//Output the current time and the FIFO job being run
