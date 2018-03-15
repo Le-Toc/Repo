@@ -1,2 +1,0 @@
-Makefile: main.cpp Job.cpp
-	g++ -o Makefile main.cpp Job.cpp -I
