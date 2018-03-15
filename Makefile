@@ -1,9 +1,10 @@
 CC=g++
 CFLAGS=-I.
 DEPS = Job.hpp
+OBJ = main.o Job.o
 
 %.o: %.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-simulate: main.o Job.o
-	g++ -o simulate main.o Job.o -I.
+simulate: $(OBJ)
+	g++ -o $@ $^ $(CFLAGS)
