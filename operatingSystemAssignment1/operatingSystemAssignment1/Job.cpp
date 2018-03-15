@@ -30,6 +30,11 @@ int Job::getDuration()
 	return duration;
 }
 
+void Job::setDuration(int newDuration)
+{
+	duration = newDuration;
+}
+
 std::string Job::getName()
 {
 	return name;

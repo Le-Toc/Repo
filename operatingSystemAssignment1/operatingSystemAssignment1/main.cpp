@@ -36,7 +36,7 @@ void updateSJF(std::vector<Job>& sjfJobs, int& currentSJFJob, int& sjfJobTime,
 	std::vector<std::string>& outputArray, bool& allSJFJobsAreDone, int& currentTime);
 void getSJFSchedule(std::vector <Job> jobVector, std::vector<Job>& sjfJobs);
 void updateRR(std::vector<Job>& rrList, int timeSlice, int& currentRRJob, int& rrJobTime,
-	std::vector<std::string>& outputArray, bool& allRRJobsAreDone, std::vector<Job> jobVector,
+	std::vector<std::string>& outputArray, bool& allRRJobsAreDone, std::vector<Job>& jobVector,
 	int& rrNumberOfJobsCompleted, int& timeSliceCount);
 
 int main()
@@ -75,7 +75,7 @@ void runProgram()
 	int currentRRJob = 0;
 	int rrJobTime = 0;
 	int rrNumberOfJobsCompleted = 0;
-	int timeSliceCount = 0;
+	int timeSliceCount = -1;
 	std::vector<Job> rrList;
 
 	std::cout << "Time			FIFO		SJF		SJCF		RR		RR" << std::endl;
@@ -314,7 +314,7 @@ void updateAllOfTheSchedules(std::vector<Job>& fifoJobs, int& fifoJobTime, bool&
 }
 
 void updateRR(std::vector<Job>& rrList, int timeSlice, int& currentRRJob, int& rrJobTime,
-	std::vector<std::string>& outputArray, bool& allRRJobsAreDone, std::vector<Job> jobVector,
+	std::vector<std::string>& outputArray, bool& allRRJobsAreDone, std::vector<Job>& jobVector,
 	int& rrNumberOfJobsCompleted, int& timeSliceCount)
 {
 	timeSliceCount++;
@@ -330,16 +330,21 @@ void updateRR(std::vector<Job>& rrList, int timeSlice, int& currentRRJob, int& r
 	}
 
 	//Get the duration of the current job
-	int duration = rrList[currentRRJob].getDuration();
-	duration -= 1;
+	rrList[currentRRJob].setDuration(rrList[currentRRJob].getDuration() - 1);
 
 	//If the job is finished...
-	if (duration == 0)
+	if (rrList[currentRRJob].getDuration() == 0)
 	{
-		outputMessage("COMPLETE: ", rrList[currentRRJob].getName());
 		addToEntry(rrList[currentRRJob].getName(), outputArray, 3);
+		outputMessage("RR COMPLETE: ", rrList[currentRRJob].getName());
 
 		rrList.erase(rrList.begin() + currentRRJob);
+
+		if (currentRRJob == rrList.size())
+		{
+			currentRRJob = 0;
+			timeSliceCount = -1;
+		}
 
 		rrNumberOfJobsCompleted++;
 

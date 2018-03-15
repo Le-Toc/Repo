@@ -11,6 +11,7 @@ public:
 	//Properities
 	int getArrivalTime();
 	int getDuration();
+	void setDuration(int duration);
 	std::string getName();
 
 	//Methods
